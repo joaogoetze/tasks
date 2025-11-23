@@ -43,7 +43,9 @@ fun Home(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {}
+                onClick = {
+                    navController.navigate("createTask")
+                }
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,

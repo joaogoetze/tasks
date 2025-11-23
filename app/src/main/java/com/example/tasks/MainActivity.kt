@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
+import com.example.tasks.view.CreateTask
 import com.example.tasks.view.Home
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -20,13 +21,18 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
 
             NavHost(
-                startDestination = "Home",
+                startDestination = "home",
                 navController = navController
             ) {
                 composable(
-                    route = "Home"
+                    route = "home"
                 ) {
                     Home(navController = navController)
+                }
+                composable(
+                    route = "createTask"
+                ) {
+                    CreateTask(navController = navController)
                 }
             }
         }
