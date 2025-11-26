@@ -23,7 +23,7 @@ fun TaskItem(
             Text(text = task.title.toString())
             Text(text = task.description.toString())
             Text(text = task.priority.toString())
-            Text(text = task.deadLine.toString())
+            Text(text = task.deadline.toString())
         }
     }
 }

@@ -28,9 +28,9 @@ fun Home(
 ) {
 
     val tasksArray = mutableListOf(
-        Task(title = "Task Title 1", description = "Task description 1", priority = 1, deadLine = LocalDate.of(2025, 12, 20)),
-        Task(title = "Task Title 2", description = "Task description 2", priority = 2, deadLine = LocalDate.of(2025, 12, 21)),
-        Task(title = "Task Title 3", description = "Task description 3", priority = 3, deadLine = LocalDate.of(2025, 12, 22))
+        Task(title = "Task Title 1", description = "Task description 1", priority = 1, deadline = LocalDate.of(2025, 12, 20)),
+        Task(title = "Task Title 2", description = "Task description 2", priority = 2, deadline = LocalDate.of(2025, 12, 21)),
+        Task(title = "Task Title 3", description = "Task description 3", priority = 3, deadline = LocalDate.of(2025, 12, 22))
     )
 
     Scaffold(
