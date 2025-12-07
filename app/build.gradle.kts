@@ -62,4 +62,8 @@ dependencies {
     implementation(libs.hilt.android)
     implementation (libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler.v272)
+    implementation(libs.androidx.room.ktx)
 }

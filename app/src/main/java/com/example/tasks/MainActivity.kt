@@ -4,11 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
 import com.example.tasks.view.CreateTask
 import com.example.tasks.view.Home
+import com.example.tasks.viewmodel.TaskViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -19,6 +21,7 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             val navController = rememberNavController()
+            val viewModel: TaskViewModel = hiltViewModel()
 
             NavHost(
                 startDestination = "home",
@@ -27,12 +30,12 @@ class MainActivity : ComponentActivity() {
                 composable(
                     route = "home"
                 ) {
-                    Home(navController = navController)
+                    Home(navController = navController, viewModel = viewModel)
                 }
                 composable(
                     route = "createTask"
                 ) {
-                    CreateTask(navController = navController)
+                    CreateTask(navController = navController, viewModel = viewModel)
                 }
             }
         }

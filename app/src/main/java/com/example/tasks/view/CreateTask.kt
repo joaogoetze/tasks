@@ -26,7 +26,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.tasks.model.Task
+import com.example.tasks.viewmodel.TaskViewModel
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -34,7 +37,8 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateTask(
-    navController: NavController
+    navController: NavController,
+    viewModel: TaskViewModel = hiltViewModel()
 ) {
 
     var title by remember { mutableStateOf("") }
@@ -138,7 +142,12 @@ fun CreateTask(
                 }
             }
             Button(
-                onClick = {}
+                onClick = {
+                    //TODO fazer validações antes de criar o objeto
+                    val task = Task(title = title, description = description, priority = priority, deadline = deadline)
+                    viewModel.createTask(task)
+                    //TODO Verficar o resultado para mostrar um toast na tela
+                }
             ) {
                 Text(text = "Create")
             }

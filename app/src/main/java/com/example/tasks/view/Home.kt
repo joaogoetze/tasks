@@ -14,24 +14,23 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.getValue
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.tasks.components.TaskItem
-import com.example.tasks.model.Task
-import java.time.LocalDate
+import com.example.tasks.viewmodel.TaskViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(
-    navController: NavController
+    navController: NavController,
+    viewModel: TaskViewModel = hiltViewModel()
 ) {
 
-    val tasksArray = mutableListOf(
-        Task(title = "Task Title 1", description = "Task description 1", priority = 1, deadline = LocalDate.of(2025, 12, 20)),
-        Task(title = "Task Title 2", description = "Task description 2", priority = 2, deadline = LocalDate.of(2025, 12, 21)),
-        Task(title = "Task Title 3", description = "Task description 3", priority = 3, deadline = LocalDate.of(2025, 12, 22))
-    )
+    val tasksArray by viewModel.tasks.collectAsState()
 
     Scaffold(
         topBar = {
