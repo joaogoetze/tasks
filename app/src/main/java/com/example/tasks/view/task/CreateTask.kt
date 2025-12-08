@@ -1,4 +1,4 @@
-package com.example.tasks.view
+package com.example.tasks.view.task
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -147,6 +147,7 @@ fun CreateTask(
                     val task = Task(title = title, description = description, priority = priority, deadline = deadline)
                     viewModel.createTask(task)
                     //TODO Verficar o resultado para mostrar um toast na tela
+                    navController.popBackStack()
                 }
             ) {
                 Text(text = "Create")

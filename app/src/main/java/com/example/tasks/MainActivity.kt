@@ -8,8 +8,10 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
-import com.example.tasks.view.CreateTask
+import androidx.navigation.navArgument
+import com.example.tasks.view.task.CreateTask
 import com.example.tasks.view.Home
+import com.example.tasks.view.task.UpdateTask
 import com.example.tasks.viewmodel.TaskViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -36,6 +38,26 @@ class MainActivity : ComponentActivity() {
                     route = "createTask"
                 ) {
                     CreateTask(navController = navController, viewModel = viewModel)
+                }
+                composable(
+                    route = "updateTask/{uid}/{title}/{description}/{priority}/{deadline}",
+                    arguments = listOf(
+                        navArgument(name = "uid") {},
+                        navArgument(name = "title") {},
+                        navArgument(name = "description") {},
+                        navArgument(name = "priority") {},
+                        navArgument(name = "deadline") {}
+                    )
+                ) {
+                    UpdateTask(
+                        navController,
+                        it.arguments?.getString("uid").toString(),
+                        it.arguments?.getString("title").toString(),
+                        it.arguments?.getString("description").toString(),
+                        it.arguments?.getString("priority")!!.toInt(),
+                        it.arguments?.getString("deadline").toString(),
+                        viewModel
+                    )
                 }
             }
         }

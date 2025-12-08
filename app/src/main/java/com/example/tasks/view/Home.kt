@@ -60,7 +60,7 @@ fun Home(
                 modifier = Modifier.padding(5.dp)
             ) {
                 itemsIndexed(tasksArray) { _, task ->
-                    TaskItem(task = task)
+                    TaskItem(task = task, viewModel = viewModel, navController = navController)
                 }
             }
         }
