@@ -5,7 +5,9 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -13,6 +15,8 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -25,9 +29,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.tasks.model.Priorities
 import com.example.tasks.model.Task
 import com.example.tasks.viewmodel.TaskViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -43,7 +49,7 @@ fun CreateTask(
 
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
-    var priority by remember { mutableStateOf(0) }
+    var priority by remember { mutableStateOf(Priorities.LOW) }
     var deadline by remember { mutableStateOf(LocalDate.now()) }
 
     var openDatePicker by remember { mutableStateOf(false) }
@@ -87,18 +93,41 @@ fun CreateTask(
                     keyboardType = KeyboardType.Text
                 )
             )
-            OutlinedTextField(
-                value = priority.toString(),
-                onValueChange = {
-                    priority = it.toIntOrNull() ?: 0
-                },
-                label = {
-                    Text(text = "Priority")
-                },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "Priority")
+
+                RadioButton(
+                    selected = priority == Priorities.LOW,
+                    onClick = {
+                        priority = Priorities.LOW
+                    },
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = Color.Green
+                    )
                 )
-            )
+                RadioButton(
+                    selected = priority == Priorities.MEDIUM,
+                    onClick = {
+                        priority = Priorities.MEDIUM
+                    },
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = Color.Yellow
+                    )
+                )
+                RadioButton(
+                    selected = priority == Priorities.HIGH,
+                    onClick = {
+                        priority = Priorities.HIGH
+                    },
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = Color.Red
+                    )
+                )
+            }
             OutlinedTextField(
                 value = deadline.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                 onValueChange = {},
@@ -144,7 +173,8 @@ fun CreateTask(
             Button(
                 onClick = {
                     //TODO fazer validações antes de criar o objeto
-                    val task = Task(title = title, description = description, priority = priority, deadline = deadline)
+
+                    val task = Task(title = title, description = description, priority = priority.value, deadline = deadline)
                     viewModel.createTask(task)
                     //TODO Verficar o resultado para mostrar um toast na tela
                     navController.popBackStack()
