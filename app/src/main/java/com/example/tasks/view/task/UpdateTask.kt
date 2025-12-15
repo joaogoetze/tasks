@@ -1,5 +1,6 @@
 package com.example.tasks.view.task
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
@@ -30,10 +31,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.tasks.model.Priorities
+import com.example.tasks.model.Task
 import com.example.tasks.viewmodel.TaskViewModel
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
@@ -62,6 +65,8 @@ fun UpdateTask(
     val datePickerstate = rememberDatePickerState(
         initialSelectedDateMillis = deadline.toEpochDay() * 24L * 60 * 60 * 1000
     )
+
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -180,10 +185,14 @@ fun UpdateTask(
             }
             Button(
                 onClick = {
-                    //TODO fazer validações antes de criar o objeto
-                    viewModel.updateTask(uid.toInt(), title, description, priority.value, deadline)
-                    //TODO Verficar o resultado para mostrar um toast na tela
-                    navController.popBackStack()
+                    if (title.isEmpty() || priority.value !in 1..3 || deadline.isBefore(LocalDate.now())) {
+                        Toast.makeText(context, "Invalid data!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        val task = Task(title = title, description = description, priority = priority.value, deadline = deadline)
+                        viewModel.createTask(task)
+                        //TODO Verficar o resultado para mostrar um toast na tela
+                        navController.popBackStack()
+                    }
                 }
             ) {
                 Text(text = "Update")
