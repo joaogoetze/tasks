@@ -1,9 +1,14 @@
 package com.example.tasks.components
 
 import android.app.AlertDialog
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
@@ -13,7 +18,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -33,6 +40,13 @@ fun TaskItem(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val uid = task.uid
+
+    val priorityIndicatorColor = when(task.priority) {
+        1 -> Color.Green
+        2 -> Color.Yellow
+        3 -> Color.Red
+        else -> Color.Gray
+    }
 
     fun deleteTaskAlertDialog() {
         val alertDialog = AlertDialog.Builder(context)
@@ -55,35 +69,48 @@ fun TaskItem(
     Card(
         modifier = Modifier.fillMaxWidth().padding(5.dp)
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(5.dp)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = task.title.toString())
-            Text(text = task.description.toString())
-            Text(text = task.priority.toString())
-            Text(text = task.deadline.toString())
-            IconButton(
-                onClick = {
-                    deleteTaskAlertDialog()
-                }
+            Column(
+                modifier = Modifier.weight(1f)
             ) {
-                Icon(
-                    imageVector = Icons.Outlined.Delete,
-                    contentDescription = "Delete task button"
+                Text(text = task.title.toString())
+                Text(text = task.description.toString())
+                Box(
+                    modifier = Modifier
+                        .size(15.dp)
+                        .background(priorityIndicatorColor, CircleShape)
                 )
+                Text(text = task.deadline.toString())
             }
-            IconButton(
-                onClick = {
-                    val deadlineString = task.deadline.toString()
-                    navController.navigate(
-                        "updateTask/${task.uid}/${task.title}/${task.description}/${task.priority}/$deadlineString"
+            Row {
+                IconButton(
+                    onClick = {
+                        deleteTaskAlertDialog()
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Delete,
+                        contentDescription = "Delete task button"
                     )
                 }
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Edit,
-                    contentDescription = "Edit task button"
-                )
+                IconButton(
+                    onClick = {
+                        val deadlineString = task.deadline.toString()
+                        navController.navigate(
+                            "updateTask/${task.uid}/${task.title}/${task.description}/${task.priority}/$deadlineString"
+                        )
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Edit,
+                        contentDescription = "Edit task button"
+                    )
+                }
             }
         }
     }

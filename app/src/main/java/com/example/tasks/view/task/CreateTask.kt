@@ -181,7 +181,6 @@ fun CreateTask(
                     } else {
                         val task = Task(title = title, description = description, priority = priority.value, deadline = deadline)
                         viewModel.createTask(task)
-                        //TODO Verficar o resultado para mostrar um toast na tela
                         navController.popBackStack()
                     }
                 }
