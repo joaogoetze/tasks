@@ -188,8 +188,8 @@ fun UpdateTask(
                     if (title.isEmpty() || priority.value !in 1..3 || deadline.isBefore(LocalDate.now())) {
                         Toast.makeText(context, "Invalid data!", Toast.LENGTH_SHORT).show()
                     } else {
-                        val task = Task(title = title, description = description, priority = priority.value, deadline = deadline)
-                        viewModel.createTask(task)
+                        val task = Task(uid = uid.toInt(), title = title, description = description, priority = priority.value, deadline = deadline)
+                        viewModel.updateTask(task = task)
                         navController.popBackStack()
                     }
                 }

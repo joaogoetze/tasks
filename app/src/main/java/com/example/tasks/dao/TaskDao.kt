@@ -3,9 +3,9 @@ package com.example.tasks.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.example.tasks.model.Task
 import kotlinx.coroutines.flow.Flow
-import java.time.LocalDate
 
 @Dao
 interface TaskDao {
@@ -16,8 +16,8 @@ interface TaskDao {
     @Insert
     suspend fun createTask(task: Task)
 
-    @Query("UPDATE task_table SET title = :title, description = :description, priority = :priority, deadline = :deadline WHERE uid = :uid")
-    suspend fun updateTask(uid: Int, title: String, description: String, priority: Int, deadline: LocalDate)
+    @Update
+    suspend fun updateTask(task: Task)
 
     @Query("DELETE FROM task_table WHERE uid = :uid")
     suspend fun deleteTask(uid: Int)

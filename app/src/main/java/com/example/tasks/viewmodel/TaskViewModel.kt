@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,9 +26,9 @@ class TaskViewModel @Inject constructor(private val repository: Repository): Vie
         }
     }
 
-    fun updateTask(uid: Int, title: String, description: String, priority: Int, deadline: LocalDate) {
+    fun updateTask(task: Task) {
         viewModelScope.launch {
-            repository.updateTask(uid, title, description, priority, deadline)
+            repository.updateTask(task = task)
         }
     }
 
