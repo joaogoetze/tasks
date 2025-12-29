@@ -10,16 +10,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -33,8 +37,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.tasks.components.PriorityOption
 import com.example.tasks.model.Priorities
 import com.example.tasks.model.Task
 import com.example.tasks.viewmodel.TaskViewModel
@@ -56,6 +63,7 @@ fun CreateTask(
 
     var openDatePicker by remember { mutableStateOf(false) }
     val datePickerstate = rememberDatePickerState()
+    val isFormValid = title.isNotBlank()
 
     val context = LocalContext.current
 
@@ -69,9 +77,12 @@ fun CreateTask(
         }
     ) { paddingValues ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(paddingValues),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(paddingValues)
+                .padding(10.dp),
+           verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             OutlinedTextField(
                 value = title,
@@ -83,7 +94,8 @@ fun CreateTask(
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text
-                )
+                ),
+                modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
                 value = description,
@@ -95,42 +107,25 @@ fun CreateTask(
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text
-                )
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                minLines = 3,
+                maxLines = 5
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Priority")
-
-                RadioButton(
-                    selected = priority == Priorities.LOW,
-                    onClick = {
-                        priority = Priorities.LOW
-                    },
-                    colors = RadioButtonDefaults.colors(
-                        selectedColor = Color.Green
-                    )
-                )
-                RadioButton(
-                    selected = priority == Priorities.MEDIUM,
-                    onClick = {
-                        priority = Priorities.MEDIUM
-                    },
-                    colors = RadioButtonDefaults.colors(
-                        selectedColor = Color.Yellow
-                    )
-                )
-                RadioButton(
-                    selected = priority == Priorities.HIGH,
-                    onClick = {
-                        priority = Priorities.HIGH
-                    },
-                    colors = RadioButtonDefaults.colors(
-                        selectedColor = Color.Red
-                    )
-                )
+                PriorityOption("Low", Color.Green, priority == Priorities.LOW) {
+                    priority = Priorities.LOW
+                }
+                PriorityOption("Medium", Color.Yellow, priority == Priorities.MEDIUM) {
+                    priority = Priorities.MEDIUM
+                }
+                PriorityOption("High", Color.Red, priority == Priorities.HIGH) {
+                    priority = Priorities.HIGH
+                }
             }
             OutlinedTextField(
                 value = deadline.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
@@ -152,7 +147,14 @@ fun CreateTask(
                         }
                     }
                 },
-                readOnly = true
+                readOnly = true,
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = {
+                    Icon(
+                        Icons.Default.DateRange,
+                        contentDescription = "Calendar Icon"
+                    )
+                }
             )
             AnimatedVisibility(openDatePicker) {
                 DatePickerDialog(
@@ -176,23 +178,26 @@ fun CreateTask(
             }
             Button(
                 onClick = {
-                    if (title.isEmpty() || priority.value !in 1..3 || deadline.isBefore(LocalDate.now())) {
+                    if (title.isEmpty() || priority.value !in 1..3) {
                         Toast.makeText(context, "Invalid data!", Toast.LENGTH_SHORT).show()
                     } else {
                         val task = Task(title = title, description = description, priority = priority.value, deadline = deadline)
                         viewModel.createTask(task)
                         navController.popBackStack()
                     }
-                }
+                },
+                enabled = isFormValid,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Create")
+                Text(text = "Create Task")
             }
-            Button(
-                onClick = {
-                    navController.popBackStack()
-                }
+            TextButton(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Cancel")
+                Text(
+                    text = "Cancel",
+                    textDecoration = TextDecoration.Underline)
             }
         }
     }
