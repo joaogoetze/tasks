@@ -5,9 +5,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
@@ -22,13 +25,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.tasks.model.Task
 import com.example.tasks.viewmodel.TaskViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun TaskItem(
@@ -40,6 +47,7 @@ fun TaskItem(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val uid = task.uid
+    val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
     val priorityIndicatorColor = when(task.priority) {
         1 -> Color.Green
@@ -67,37 +75,47 @@ fun TaskItem(
     }
 
     Card(
-        modifier = Modifier.fillMaxWidth().padding(5.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 4.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
+                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(5.dp)
             ) {
-                Text(text = task.title.toString())
-                Text(text = task.description.toString())
-                Box(
-                    modifier = Modifier
-                        .size(15.dp)
-                        .background(priorityIndicatorColor, CircleShape)
+                Text(
+                    text = task.title.toString(),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold
                 )
-                Text(text = task.deadline.toString())
+                Text(
+                    text = task.description.toString(),
+                    fontSize = 14.sp,
+                    maxLines = 2,
+                    color = Color.Gray,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(15.dp)
+                            .background(priorityIndicatorColor, CircleShape)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(text = task.deadline.format(dateFormatter))
+                }
             }
             Row {
-                IconButton(
-                    onClick = {
-                        deleteTaskAlertDialog()
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Delete,
-                        contentDescription = "Delete task button"
-                    )
-                }
                 IconButton(
                     onClick = {
                         val deadlineString = task.deadline.toString()
@@ -109,6 +127,16 @@ fun TaskItem(
                     Icon(
                         imageVector = Icons.Outlined.Edit,
                         contentDescription = "Edit task button"
+                    )
+                }
+                IconButton(
+                    onClick = {
+                        deleteTaskAlertDialog()
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Delete,
+                        contentDescription = "Delete task button"
                     )
                 }
             }
