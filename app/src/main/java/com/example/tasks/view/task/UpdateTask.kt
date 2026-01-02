@@ -71,11 +71,9 @@ fun UpdateTask(
     }
 
     var openDatePicker by remember { mutableStateOf(false) }
-
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = deadline.toEpochDay() * 24L * 60 * 60 * 1000
     )
-
     val isFormValid = title.isNotBlank()
 
     Scaffold(

@@ -1,6 +1,5 @@
 package com.example.tasks.view.task
 
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
@@ -35,7 +34,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -65,8 +63,6 @@ fun CreateTask(
     val datePickerstate = rememberDatePickerState()
     val isFormValid = title.isNotBlank()
 
-    val context = LocalContext.current
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -95,7 +91,7 @@ fun CreateTask(
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text
                 ),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
             OutlinedTextField(
                 value = description,
@@ -171,6 +167,13 @@ fun CreateTask(
                         ) {
                             Text("Select")
                         }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = { openDatePicker = false },
+                        ) {
+                            Text(text = "Cancel")
+                        }
                     }
                 ) {
                     DatePicker(datePickerstate)
@@ -178,13 +181,9 @@ fun CreateTask(
             }
             Button(
                 onClick = {
-                    if (title.isEmpty() || priority.value !in 1..3) {
-                        Toast.makeText(context, "Invalid data!", Toast.LENGTH_SHORT).show()
-                    } else {
-                        val task = Task(title = title, description = description, priority = priority.value, deadline = deadline)
-                        viewModel.createTask(task)
-                        navController.popBackStack()
-                    }
+                    val task = Task(title = title, description = description, priority = priority.value, deadline = deadline)
+                    viewModel.createTask(task)
+                    navController.popBackStack()
                 },
                 enabled = isFormValid,
                 modifier = Modifier.fillMaxWidth()
@@ -197,7 +196,8 @@ fun CreateTask(
             ) {
                 Text(
                     text = "Cancel",
-                    textDecoration = TextDecoration.Underline)
+                    textDecoration = TextDecoration.Underline
+                )
             }
         }
     }
