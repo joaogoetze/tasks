@@ -60,8 +60,10 @@
                         Icon(
                             imageVector = Icons.Rounded.List,
                             contentDescription = "Filter list dropdown menu",
-                            modifier = Modifier.clickable{
-                                filterMenuState = true
+                            modifier = Modifier
+                                .padding(end = 12.dp)
+                                .clickable{
+                                    filterMenuState = true
                             }
                         )
                         Column(
