@@ -18,14 +18,19 @@ import javax.inject.Inject
 class TaskViewModel @Inject constructor(private val repository: Repository): ViewModel() {
 
     private val _sortType = MutableStateFlow(SortType.DATE)
-    val sortType: StateFlow<SortType> = _sortType
 
     val tasks: StateFlow<List<Task>> = repository.getTasks
         .combine(_sortType) { tasks, sort ->
-            when (sort) {
-                SortType.DATE -> tasks.sortedBy { it.deadline }
-                SortType.PRIORITY -> tasks.sortedByDescending { it.priority }
+            val comparator = when (sort) {
+                SortType.DATE ->
+                    compareBy<Task> { it.completed }
+                        .thenBy { it.deadline }
+                SortType.PRIORITY ->
+                    compareBy<Task> { it.completed }
+                        .thenByDescending { it.priority }
             }
+
+            tasks.sortedWith(comparator)
         }
         .stateIn(
         scope = viewModelScope,
@@ -52,6 +57,12 @@ class TaskViewModel @Inject constructor(private val repository: Repository): Vie
     fun deleteTask(uid: Int) {
         viewModelScope.launch {
             repository.deleteTask(uid)
+        }
+    }
+
+    fun completeTask(uid: Int, complete: Boolean) {
+        viewModelScope.launch {
+            repository.updateTaskCompletion(uid, complete)
         }
     }
 }

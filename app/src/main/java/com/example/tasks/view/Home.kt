@@ -1,12 +1,17 @@
     package com.example.tasks.view
 
+    import androidx.compose.animation.AnimatedVisibility
+    import androidx.compose.animation.expandVertically
+    import androidx.compose.animation.fadeIn
+    import androidx.compose.animation.fadeOut
+    import androidx.compose.animation.shrinkVertically
     import androidx.compose.foundation.clickable
     import androidx.compose.foundation.layout.Column
     import androidx.compose.foundation.layout.fillMaxSize
     import androidx.compose.foundation.layout.padding
     import androidx.compose.foundation.layout.width
     import androidx.compose.foundation.lazy.LazyColumn
-    import androidx.compose.foundation.lazy.itemsIndexed
+    import androidx.compose.foundation.lazy.items
     import androidx.compose.material.icons.Icons
     import androidx.compose.material.icons.filled.Add
     import androidx.compose.material.icons.rounded.List
@@ -41,14 +46,7 @@
 
         var filterMenuState by remember { mutableStateOf(false) }
 
-        val sortType by viewModel.sortType.collectAsState()
-        val tasksArray by viewModel.tasks.collectAsState()
-        val sortedTasks = remember(tasksArray, sortType) {
-            when (sortType) {
-                SortType.DATE -> tasksArray.sortedBy { it.deadline }
-                SortType.PRIORITY -> tasksArray.sortedByDescending { it.priority }
-            }
-        }
+        val tasks by viewModel.tasks.collectAsState()
 
         Scaffold(
             topBar = {
@@ -62,7 +60,7 @@
                             contentDescription = "Filter list dropdown menu",
                             modifier = Modifier
                                 .padding(end = 12.dp)
-                                .clickable{
+                                .clickable {
                                     filterMenuState = true
                             }
                         )
@@ -118,12 +116,21 @@
                 LazyColumn(
                     modifier = Modifier.padding(5.dp)
                 ) {
-                    itemsIndexed(sortedTasks) { _, task -> task.uid
-                        TaskItem(
-                            task = task,
-                            viewModel = viewModel,
-                            navController = navController
-                        )
+                    items(
+                        items = tasks,
+                        key = { it.uid }
+                    ) { task ->
+                        AnimatedVisibility(
+                            visible = true,
+                            enter = fadeIn() + expandVertically(),
+                            exit = fadeOut() + shrinkVertically()
+                        ) {
+                            TaskItem(
+                                task = task,
+                                viewModel = viewModel,
+                                navController = navController
+                            )
+                        }
                     }
                 }
             }

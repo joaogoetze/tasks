@@ -13,5 +13,6 @@ data class Task(
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "description") val description: String,
     @ColumnInfo(name = "priority") val priority: Int,
-    @ColumnInfo(name = "deadline") val deadline: LocalDate
+    @ColumnInfo(name = "deadline") val deadline: LocalDate,
+    @ColumnInfo(name = "completed") val completed: Boolean
 )

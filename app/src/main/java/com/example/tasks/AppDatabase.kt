@@ -7,7 +7,7 @@ import com.example.tasks.dao.TaskDao
 import com.example.tasks.model.Task
 import com.example.tasks.utils.Converters
 
-@Database(entities = [Task::class], version = 1)
+@Database(entities = [Task::class], version = 3)
 @TypeConverters(Converters::class)
 abstract class AppDatabase: RoomDatabase() {
     abstract fun taskDao(): TaskDao

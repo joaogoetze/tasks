@@ -22,4 +22,8 @@ class Repository @Inject constructor(private val taskDao: TaskDao){
     suspend fun deleteTask(uid: Int) {
         taskDao.deleteTask(uid)
     }
+
+    suspend fun updateTaskCompletion(uid: Int, completed: Boolean) {
+        taskDao.updateTaskCompletion(uid, completed)
+    }
 }

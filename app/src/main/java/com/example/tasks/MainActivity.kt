@@ -38,13 +38,14 @@ class MainActivity : ComponentActivity() {
                     CreateTask(navController = navController, viewModel = viewModel)
                 }
                 composable(
-                    route = "updateTask/{uid}/{title}/{description}/{priority}/{deadline}",
+                    route = "updateTask/{uid}/{title}/{description}/{priority}/{deadline}/{completed}",
                     arguments = listOf(
                         navArgument(name = "uid") {},
                         navArgument(name = "title") {},
                         navArgument(name = "description") {},
                         navArgument(name = "priority") {},
-                        navArgument(name = "deadline") {}
+                        navArgument(name = "deadline") {},
+                        navArgument(name = "completed") {}
                     )
                 ) {
                     UpdateTask(
@@ -54,6 +55,7 @@ class MainActivity : ComponentActivity() {
                         it.arguments?.getString("description").toString(),
                         it.arguments?.getString("priority")!!.toInt(),
                         it.arguments?.getString("deadline").toString(),
+                        it.arguments?.getString("completed")!!.toBoolean(),
                         viewModel
                     )
                 }

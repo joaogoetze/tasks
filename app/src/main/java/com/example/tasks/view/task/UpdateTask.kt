@@ -56,6 +56,7 @@ fun UpdateTask(
     initialDescription: String,
     initialPriority: Int,
     initialDeadline: String,
+    initialCompleted: Boolean,
     viewModel: TaskViewModel = hiltViewModel()
 ) {
 
@@ -92,25 +93,25 @@ fun UpdateTask(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
                 value = title,
                 onValueChange = { title = it },
                 label = { Text("Title") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                modifier = Modifier.fillMaxWidth()
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
             )
             OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
                 value = description,
                 onValueChange = { description = it },
                 label = { Text("Description") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                modifier = Modifier.fillMaxWidth(),
                 minLines = 3,
                 maxLines = 5
             )
             Row(
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
+                horizontalArrangement = Arrangement.Center
             ) {
                 PriorityOption("Low", Color.Green, priority == Priorities.LOW) {
                     priority = Priorities.LOW
@@ -123,11 +124,11 @@ fun UpdateTask(
                 }
             }
             OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
                 value = deadline.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                 onValueChange = {},
                 label = { Text("Deadline") },
                 readOnly = true,
-                modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 leadingIcon = {
                     Icon(
@@ -168,25 +169,26 @@ fun UpdateTask(
                 }
             }
             Button(
+                modifier = Modifier.fillMaxWidth(),
                 onClick = {
                     val task = Task(
                         uid = uid.toInt(),
                         title = title,
                         description = description,
                         priority = priority.value,
-                        deadline = deadline
+                        deadline = deadline,
+                        completed = initialCompleted
                     )
                     viewModel.updateTask(task)
                     navController.popBackStack()
                 },
-                enabled = isFormValid,
-                modifier = Modifier.fillMaxWidth()
+                enabled = isFormValid
             ) {
                 Text("Update Task")
             }
             TextButton(
-                onClick = { navController.popBackStack() },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { navController.popBackStack() }
             ) {
                 Text(
                     text = "Cancel",

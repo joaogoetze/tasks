@@ -4,6 +4,8 @@ import android.content.Context
 import com.example.tasks.AppDatabase
 import com.example.tasks.constraints.Constraints
 import androidx.room.Room
+import com.example.tasks.db.MIGRATION_1_2
+import com.example.tasks.db.MIGRATION_2_3
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,12 +20,14 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun provideDatabase(
-        @ApplicationContext constext: Context
+        @ApplicationContext context: Context
     ) = Room.databaseBuilder(
-        constext,
+        context,
         AppDatabase::class.java,
         Constraints.TASK_DB
-    ).build()
+    )
+        .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+        .build()
 
     @Singleton
     @Provides

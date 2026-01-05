@@ -81,6 +81,7 @@ fun CreateTask(
            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
                 value = title,
                 onValueChange = {
                     title = it
@@ -90,10 +91,10 @@ fun CreateTask(
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text
-                ),
-                modifier = Modifier.fillMaxWidth(),
+                )
             )
             OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
                 value = description,
                 onValueChange = {
                     description = it
@@ -104,14 +105,13 @@ fun CreateTask(
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text
                 ),
-                modifier = Modifier.fillMaxWidth(),
                 minLines = 3,
                 maxLines = 5
             )
             Row(
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
+                horizontalArrangement = Arrangement.Center
             ) {
                 PriorityOption("Low", Color.Green, priority == Priorities.LOW) {
                     priority = Priorities.LOW
@@ -124,6 +124,7 @@ fun CreateTask(
                 }
             }
             OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
                 value = deadline.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                 onValueChange = {},
                 label = {
@@ -144,7 +145,6 @@ fun CreateTask(
                     }
                 },
                 readOnly = true,
-                modifier = Modifier.fillMaxWidth(),
                 leadingIcon = {
                     Icon(
                         Icons.Default.DateRange,
@@ -180,19 +180,25 @@ fun CreateTask(
                 }
             }
             Button(
+                modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    val task = Task(title = title, description = description, priority = priority.value, deadline = deadline)
+                    val task = Task(
+                        title = title,
+                        description = description,
+                        priority = priority.value,
+                        deadline = deadline,
+                        completed = false
+                    )
                     viewModel.createTask(task)
                     navController.popBackStack()
                 },
-                enabled = isFormValid,
-                modifier = Modifier.fillMaxWidth()
+                enabled = isFormValid
             ) {
                 Text(text = "Create Task")
             }
             TextButton(
-                onClick = { navController.popBackStack() },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { navController.popBackStack() }
             ) {
                 Text(
                     text = "Cancel",

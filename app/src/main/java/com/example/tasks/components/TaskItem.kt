@@ -1,6 +1,7 @@
 package com.example.tasks.components
 
 import android.app.AlertDialog
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,16 +17,20 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,6 +44,7 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun TaskItem(
+    modifier: Modifier = Modifier,
     task: Task,
     viewModel: TaskViewModel = hiltViewModel(),
     navController: NavController
@@ -49,11 +55,20 @@ fun TaskItem(
     val uid = task.uid
     val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
-    val priorityIndicatorColor = when(task.priority) {
-        1 -> Color.Green
-        2 -> Color.Yellow
-        3 -> Color.Red
-        else -> Color.Gray
+    val animatedAlpha by animateFloatAsState(
+        targetValue = if (task.completed) 0.5f else 1f,
+        label = "contentAlpha"
+    )
+
+    val priorityIndicatorColor = if (task.completed) {
+        Color.Gray
+    } else {
+        when(task.priority) {
+            1 -> Color.Green
+            2 -> Color.Yellow
+            3 -> Color.Red
+            else -> Color.Gray
+        }
     }
 
     fun deleteTaskAlertDialog() {
@@ -75,9 +90,10 @@ fun TaskItem(
     }
 
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 4.dp)
+            .graphicsLayer { alpha = animatedAlpha }
     ) {
         Row(
             modifier = Modifier
@@ -93,7 +109,10 @@ fun TaskItem(
                 Text(
                     text = task.title.toString(),
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    textDecoration = if (task.completed)
+                        TextDecoration.LineThrough
+                    else null
                 )
                 Text(
                     text = task.description.toString(),
@@ -120,7 +139,7 @@ fun TaskItem(
                     onClick = {
                         val deadlineString = task.deadline.toString()
                         navController.navigate(
-                            "updateTask/${task.uid}/${task.title}/${task.description}/${task.priority}/$deadlineString"
+                            "updateTask/${task.uid}/${task.title}/${task.description}/${task.priority}/$deadlineString/${task.completed}"
                         )
                     }
                 ) {
@@ -139,6 +158,14 @@ fun TaskItem(
                         contentDescription = "Delete task button"
                     )
                 }
+                Checkbox(
+                    checked = task.completed,
+                    onCheckedChange = { isChecked ->
+                        viewModel.completeTask(
+                            task.uid, isChecked
+                        )
+                    }
+                )
             }
         }
     }
