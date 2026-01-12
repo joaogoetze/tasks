@@ -1,138 +1,149 @@
-    package com.example.tasks.view
+package com.example.tasks.view
 
-    import androidx.compose.animation.AnimatedVisibility
-    import androidx.compose.animation.expandVertically
-    import androidx.compose.animation.fadeIn
-    import androidx.compose.animation.fadeOut
-    import androidx.compose.animation.shrinkVertically
-    import androidx.compose.foundation.clickable
-    import androidx.compose.foundation.layout.Column
-    import androidx.compose.foundation.layout.fillMaxSize
-    import androidx.compose.foundation.layout.padding
-    import androidx.compose.foundation.layout.width
-    import androidx.compose.foundation.lazy.LazyColumn
-    import androidx.compose.foundation.lazy.items
-    import androidx.compose.material.icons.Icons
-    import androidx.compose.material.icons.filled.Add
-    import androidx.compose.material.icons.rounded.List
-    import androidx.compose.material3.DropdownMenu
-    import androidx.compose.material3.DropdownMenuItem
-    import androidx.compose.material3.ExperimentalMaterial3Api
-    import androidx.compose.material3.FloatingActionButton
-    import androidx.compose.material3.Icon
-    import androidx.compose.material3.Scaffold
-    import androidx.compose.material3.Text
-    import androidx.compose.material3.TopAppBar
-    import androidx.compose.runtime.Composable
-    import androidx.compose.runtime.collectAsState
-    import androidx.compose.ui.Modifier
-    import androidx.compose.ui.unit.dp
-    import androidx.compose.runtime.getValue
-    import androidx.compose.runtime.mutableStateOf
-    import androidx.compose.runtime.remember
-    import androidx.compose.runtime.setValue
-    import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-    import androidx.navigation.NavController
-    import com.example.tasks.components.TaskItem
-    import com.example.tasks.model.SortType
-    import com.example.tasks.viewmodel.TaskViewModel
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.rounded.List
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.font.FontWeight
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.example.tasks.components.TaskItem
+import com.example.tasks.model.SortType
+import com.example.tasks.ui.theme.White
+import com.example.tasks.viewmodel.TaskViewModel
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun Home(
-        navController: NavController,
-        viewModel: TaskViewModel = hiltViewModel()
-    ) {
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Home(
+    navController: NavController,
+    viewModel: TaskViewModel = hiltViewModel()
+) {
 
-        var filterMenuState by remember { mutableStateOf(false) }
+    var filterMenuState by remember { mutableStateOf(false) }
 
-        val tasks by viewModel.tasks.collectAsState()
+    val tasks by viewModel.tasks.collectAsState()
 
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(text = "Tasks")
-                    },
-                    actions = {
-                        Icon(
-                            imageVector = Icons.Rounded.List,
-                            contentDescription = "Filter list dropdown menu",
-                            modifier = Modifier
-                                .padding(end = 12.dp)
-                                .clickable {
-                                    filterMenuState = true
-                            }
-                        )
-                        Column(
-                            modifier = Modifier
-                        ) {
-                            DropdownMenu(
-                                expanded = filterMenuState,
-                                onDismissRequest = {
-                                    filterMenuState = false
-                                },
-                                modifier = Modifier.width(200.dp)
-                            ) {
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(text = "Date")
-                                    },
-                                    onClick = {
-                                        viewModel.setSortType(SortType.DATE)
-                                        filterMenuState = false
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(text = "Priority")
-                                    },
-                                    onClick = {
-                                        viewModel.setSortType(SortType.PRIORITY)
-                                        filterMenuState = false
-                                    }
-                                )
-                            }
-                        }
-                    }
-                )
-            },
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = {
-                        navController.navigate("createTask")
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Create task button"
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = "Tasks",
+                        fontWeight = FontWeight.Bold
                     )
-                }
-            }
-        ) { paddingValues ->
-            Column(
-                modifier = Modifier.fillMaxSize().padding(paddingValues)
-            ) {
-                LazyColumn(
-                    modifier = Modifier.padding(5.dp)
-                ) {
-                    items(
-                        items = tasks,
-                        key = { it.uid }
-                    ) { task ->
-                        AnimatedVisibility(
-                            visible = true,
-                            enter = fadeIn() + expandVertically(),
-                            exit = fadeOut() + shrinkVertically()
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    actionIconContentColor = White
+                ),
+                actions = {
+                    Icon(
+                        imageVector = Icons.Rounded.List,
+                        contentDescription = "Filter list dropdown menu",
+                        modifier = Modifier
+                            .padding(end = 12.dp)
+                            .clickable {
+                                filterMenuState = true
+                        }
+                    )
+                    Column(
+                        modifier = Modifier
+                    ) {
+                        DropdownMenu(
+                            expanded = filterMenuState,
+                            onDismissRequest = {
+                                filterMenuState = false
+                            },
+                            modifier = Modifier.width(200.dp)
                         ) {
-                            TaskItem(
-                                task = task,
-                                viewModel = viewModel,
-                                navController = navController
+                            DropdownMenuItem(
+                                text = {
+                                    Text(text = "Date")
+                                },
+                                onClick = {
+                                    viewModel.setSortType(SortType.DATE)
+                                    filterMenuState = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = {
+                                    Text(text = "Priority")
+                                },
+                                onClick = {
+                                    viewModel.setSortType(SortType.PRIORITY)
+                                    filterMenuState = false
+                                }
                             )
                         }
+                    }
+                }
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    navController.navigate("createTask")
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Create task button"
+                )
+            }
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            LazyColumn(
+                modifier = Modifier.padding(5.dp)
+            ) {
+                items(
+                    items = tasks,
+                    key = { it.uid }
+                ) { task ->
+                    AnimatedVisibility(
+                        visible = true,
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically()
+                    ) {
+                        TaskItem(
+                            task = task,
+                            viewModel = viewModel,
+                            navController = navController
+                        )
                     }
                 }
             }
         }
     }
+}

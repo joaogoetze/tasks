@@ -15,7 +15,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -33,7 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -42,6 +44,13 @@ import androidx.navigation.NavController
 import com.example.tasks.components.PriorityOption
 import com.example.tasks.model.Priorities
 import com.example.tasks.model.Task
+import com.example.tasks.ui.theme.componentscolors.DatePickerColors
+import com.example.tasks.ui.theme.Background
+import com.example.tasks.ui.theme.PrimaryGreenSoft
+import com.example.tasks.ui.theme.PriorityHigh
+import com.example.tasks.ui.theme.PriorityLow
+import com.example.tasks.ui.theme.PriorityMedium
+import com.example.tasks.ui.theme.componentscolors.TextFieldColors
 import com.example.tasks.viewmodel.TaskViewModel
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
@@ -80,7 +89,12 @@ fun UpdateTask(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Update Task") }
+                title = {
+                    Text(
+                        text = "Update Task",
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             )
         }
     ) { paddingValues ->
@@ -97,7 +111,8 @@ fun UpdateTask(
                 value = title,
                 onValueChange = { title = it },
                 label = { Text("Title") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                colors = TextFieldColors()
             )
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
@@ -106,20 +121,21 @@ fun UpdateTask(
                 label = { Text("Description") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 minLines = 3,
-                maxLines = 5
+                maxLines = 5,
+                colors = TextFieldColors()
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                PriorityOption("Low", Color.Green, priority == Priorities.LOW) {
+                PriorityOption("Low", PriorityLow, priority == Priorities.LOW) {
                     priority = Priorities.LOW
                 }
-                PriorityOption("Medium", Color.Yellow, priority == Priorities.MEDIUM) {
+                PriorityOption("Medium", PriorityMedium, priority == Priorities.MEDIUM) {
                     priority = Priorities.MEDIUM
                 }
-                PriorityOption("High", Color.Red, priority == Priorities.HIGH) {
+                PriorityOption("High", PriorityHigh, priority == Priorities.HIGH) {
                     priority = Priorities.HIGH
                 }
             }
@@ -133,7 +149,7 @@ fun UpdateTask(
                 leadingIcon = {
                     Icon(
                         Icons.Default.DateRange,
-                        contentDescription = "Select deadline"
+                        contentDescription = "Calendar Icon"
                     )
                 },
                 interactionSource = remember {
@@ -146,11 +162,15 @@ fun UpdateTask(
                             }
                         }
                     }
-                }
+                },
+                colors = TextFieldColors()
             )
             AnimatedVisibility(openDatePicker) {
                 DatePickerDialog(
                     onDismissRequest = { openDatePicker = false },
+                    colors = DatePickerDefaults.colors(
+                        containerColor = Background
+                    ),
                     confirmButton = {
                         Button(
                             onClick = {
@@ -163,9 +183,19 @@ fun UpdateTask(
                         ) {
                             Text("Select")
                         }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = { openDatePicker = false }
+                        ) {
+                            Text("Cancel")
+                        }
                     }
                 ) {
-                    DatePicker(datePickerState)
+                    DatePicker(
+                        state = datePickerState,
+                        colors = DatePickerColors()
+                    )
                 }
             }
             Button(
@@ -182,7 +212,10 @@ fun UpdateTask(
                     viewModel.updateTask(task)
                     navController.popBackStack()
                 },
-                enabled = isFormValid
+                enabled = isFormValid,
+                colors = ButtonDefaults.buttonColors(
+                    disabledContainerColor = PrimaryGreenSoft
+                )
             ) {
                 Text("Update Task")
             }

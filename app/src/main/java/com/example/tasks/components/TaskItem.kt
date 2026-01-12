@@ -13,11 +13,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -37,6 +40,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.tasks.model.Task
+import com.example.tasks.ui.theme.CardBackground
+import com.example.tasks.ui.theme.PrimaryGreen
+import com.example.tasks.ui.theme.PriorityHigh
+import com.example.tasks.ui.theme.PriorityLow
+import com.example.tasks.ui.theme.PriorityMedium
 import com.example.tasks.viewmodel.TaskViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -64,9 +72,9 @@ fun TaskItem(
         Color.Gray
     } else {
         when(task.priority) {
-            1 -> Color.Green
-            2 -> Color.Yellow
-            3 -> Color.Red
+            1 -> PriorityLow
+            2 -> PriorityMedium
+            3 -> PriorityHigh
             else -> Color.Gray
         }
     }
@@ -93,7 +101,11 @@ fun TaskItem(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 4.dp)
-            .graphicsLayer { alpha = animatedAlpha }
+            .graphicsLayer { alpha = animatedAlpha },
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = CardBackground
+        )
     ) {
         Row(
             modifier = Modifier
@@ -108,6 +120,7 @@ fun TaskItem(
             ) {
                 Text(
                     text = task.title.toString(),
+                    color = PrimaryGreen,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     textDecoration = if (task.completed)
@@ -131,7 +144,9 @@ fun TaskItem(
                             .background(priorityIndicatorColor, CircleShape)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(text = task.deadline.format(dateFormatter))
+                    Text(
+                        text = task.deadline.format(dateFormatter),
+                        color = Color.Gray)
                 }
             }
             Row {
@@ -145,7 +160,8 @@ fun TaskItem(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Edit,
-                        contentDescription = "Edit task button"
+                        contentDescription = "Edit task button",
+                        tint = Color.Gray
                     )
                 }
                 IconButton(
@@ -155,7 +171,8 @@ fun TaskItem(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Delete,
-                        contentDescription = "Delete task button"
+                        contentDescription = "Delete task button",
+                        tint = Color.Gray
                     )
                 }
                 Checkbox(
@@ -164,7 +181,12 @@ fun TaskItem(
                         viewModel.completeTask(
                             task.uid, isChecked
                         )
-                    }
+                    },
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = Color.Gray,
+                        uncheckedColor = Color.Gray,
+                        checkmarkColor = Color.White
+                    )
                 )
             }
         }
